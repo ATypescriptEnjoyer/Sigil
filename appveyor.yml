@@ -9,14 +9,14 @@ install:
   - yarn install
 
 # Post-install test scripts.
-tests:
+test_script:
   # Output useful info for debugging.
   - node --version
   - yarn --version
   # run tests
   - yarn test
 
-make:
+build_script:
   - yarn make
 
 deploy:
