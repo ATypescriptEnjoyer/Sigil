@@ -26,3 +26,4 @@ deploy:
   file: "out\make\squirrel.windows\x64\*.exe"
   skip_cleanup: true
   draft: true
+  
