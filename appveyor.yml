@@ -20,13 +20,17 @@ test_script:
 build_script:
   - yarn make
 
+artifacts:
+  - path: out\make\squirrel.windows\x64\*.exe
+    name: MainExe
+
 deploy:
   release: v$(package_version)
   description: 'Yet another release of sigil'
   provider: GitHub
   auth_token:
     secure: xmG4Sfnl8OiiGTUEXFH4BDBNJLk4rK9U1V09+tqfEgN0D58M991XgpRexo0KoYCm
-  artifact: out\make\squirrel.windows\x64\*.exe
+  artifact: MainExe
   draft: false
   prerelease: false
   on:
