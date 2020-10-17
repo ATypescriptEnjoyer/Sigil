@@ -21,7 +21,7 @@ build_script:
   - yarn make
 
 deploy:
-  release: Sigil-v$(package_version)
+  release: v$(package_version)
   description: 'Yet another release of sigil'
   provider: GitHub
   auth_token:
@@ -30,4 +30,5 @@ deploy:
   draft: false
   prerelease: false
   on:
-    APPVEYOR_REPO_TAG: true
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
