@@ -13,6 +13,33 @@ let champSelectSubscription: Subscription = null;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 if (require('electron-squirrel-startup')) app.quit();
+const gotTheLock = app.requestSingleInstanceLock()
+
+if(!gotTheLock) {
+  app.quit();
+}
+else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (MainBrowserWindow) {
+      if (MainBrowserWindow.isMinimized()) MainBrowserWindow.restore();
+      MainBrowserWindow.focus();
+    }
+  });
+  app.on("ready", () => {
+    if (process.platform !== "win32") {
+      dialog.showErrorBox("None Windows Platform Detected.", "This program isn't meant for you.. Sorry!");
+      app.quit();
+    }
+    createWindow();
+    leagueApi.start();
+    champSelectSubscription = leagueApi.onChampSelected.subscribe((champData) => {
+      importView.webContents.send("button-state", "disabled");
+      uggView.webContents.loadURL(`https://u.gg/lol/champions/${champData.champion}/build?role=${champData.role}`)
+        .then(_ => importView.webContents.send("button-state", "enabled"))
+    });
+  });
+}
 
 const createWindow = () => {
   console.log("Main Entry: " + MAIN_WINDOW_WEBPACK_ENTRY);
@@ -63,22 +90,8 @@ const getChampLoadoutData = async (): Promise<ChampLoadout> => {
     .catch(_ => null);
 }
 
-app.on("ready", () => {
-  if (process.platform !== "win32") {
-    dialog.showErrorBox("None Windows Platform Detected.", "This program isn't meant for you.. Sorry!");
-    app.quit();
-  }
-  createWindow();
-  leagueApi.start();
-  champSelectSubscription = leagueApi.onChampSelected.subscribe((champData) => {
-    importView.webContents.send("button-state", "disabled");
-    uggView.webContents.loadURL(`https://u.gg/lol/champions/${champData.champion}/build?role=${champData.role}`)
-      .then(_ => importView.webContents.send("button-state", "enabled"))
-  });
-});
-
 app.on("before-quit", () => {
-  leagueApi.stop();
+  leagueApi?.stop();
   champSelectSubscription?.cancel();
 })
 
