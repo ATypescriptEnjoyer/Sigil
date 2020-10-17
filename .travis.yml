@@ -1,0 +1,18 @@
+language: node_js
+node_js: "12.19.0"
+
+before_install:
+  - yarn
+
+cache:
+  directories:
+    - node_modules
+
+jobs:
+  include:
+    - stage: Test
+      script:
+        - npm test
+    - stage: Deploy Windows
+      script:
+        - yarn make
