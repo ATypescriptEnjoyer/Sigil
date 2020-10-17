@@ -2,7 +2,7 @@
   "name": "sigil",
   "productName": "Sigil",
   "leagueVersion": "10.20.1",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
