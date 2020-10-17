@@ -1,0 +1,33 @@
+environment:
+  nodejs_version: "12.19.0"
+
+cache:
+ - "%LOCALAPPDATA%\\Yarn"
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - yarn install
+
+# Post-install test scripts.
+tests:
+  # Output useful info for debugging.
+  - node --version
+  - yarn --version
+  # run tests
+  - yarn test
+
+make:
+  - yarn make
+
+deploy:
+  release: Sigil-v$(APPVEYOR_BUILD_VERSION)
+  description: 'Yet another release of sigil'
+  provider: GitHub
+  auth_token:
+    secure: xmG4Sfnl8OiiGTUEXFH4BDBNJLk4rK9U1V09+tqfEgN0D58M991XgpRexo0KoYCm
+  artifact: out\make\squirrel.windows\x64\*.exe
+  draft: false
+  prerelease: false
+  on:
+    branch: master                 # release from master branch only
+    APPVEYOR_REPO_TAG: true        # deploy on tag push only
