@@ -35,8 +35,12 @@ else {
     leagueApi.start();
     champSelectSubscription = leagueApi.onChampSelected.subscribe((champData) => {
       importView.webContents.send("button-state", "disabled");
-      uggView.webContents.loadURL(`https://u.gg/lol/champions/${champData.champion}/build?role=${champData.role}`)
+      const url = champData.role === "aram" ?
+      `https://u.gg/lol/champions/aram/${champData.champion}-aram`:
+      `https://u.gg/lol/champions/${champData.champion}/build?role=${champData.role}`;
+      uggView.webContents.loadURL(url)
         .then(_ => importView.webContents.send("button-state", "enabled"))
+        .catch(_ => importView.webContents.send("button-state", "enabled"));
     });
   });
 }
@@ -78,12 +82,13 @@ const addImportToBrowserWindow = (): void => {
 
 const getChampLoadoutData = async (): Promise<ChampLoadout> => {
   const js = `
-    JSON.stringify({
-      trees: Array.from(document.getElementsByClassName("rune-tree")).map(x => x.getElementsByClassName("perk-style-title")[0].innerText),
-      perks: Array.from(document.getElementsByClassName("perk-active")).map(x => x.firstElementChild.getAttribute("alt")),
-      shards: Array.from(document.getElementsByClassName("shard-active")).map(x => x.firstElementChild.getAttribute("alt")),
-      spells: Array.from(document.getElementsByClassName("summoner-spells")[0].getElementsByTagName("img")).map(x => x.getAttribute("alt"))
-    });
+  let myBody = document.getElementsByClassName("rune-trees-container-2")[0];
+  JSON.stringify({
+    trees: Array.from(myBody.getElementsByClassName("rune-tree_header")).map(x => x.getElementsByClassName("perk-style-title")[0].innerText),
+    perks: Array.from(myBody.getElementsByClassName("perk-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The Rune","").replace("The Keystone","").trim()),
+    shards: Array.from(myBody.getElementsByClassName("shard-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The","").replace("Shard","").replace(/\\s/g,"")),
+    spells: Array.from(document.getElementsByClassName("summoner-spells")[0].getElementsByTagName("img")).map(x => x.getAttribute("alt").replace("Summoner Spell ",""))
+  });
   `;
   return uggView.webContents.executeJavaScript(js)
     .then(val => JSON.parse(val))
@@ -106,7 +111,10 @@ app.on('certificate-error', (event, webContents, url, error, certificate, callba
 
 ipcMain.on("import-click", async (event, arg) => {
   importView.webContents.send("button-state", "disabled");
-  const json = await getChampLoadoutData();
-  await leagueApi.importChampLoadout(json);
+  try {
+    let json = await getChampLoadoutData();
+    await leagueApi.importChampLoadout(json);
+  }
+  catch(e) {}
   importView.webContents.send("button-state", "enabled");
 })

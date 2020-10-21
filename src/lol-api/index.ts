@@ -51,11 +51,12 @@ export default class lolapi {
             const champData: EventData = dataArr.find(x => typeof x === "object");
             if (champData.eventType === "Update") {
               const currentSummonersChamp = champData.data.myTeam.find(x => x.summonerId === this.currentSummoner.summonerId);
+              const gamemode = champData.data.allowRerolling ? "aram" : this.parsePosition(currentSummonersChamp.assignedPosition);
               if (currentSummonersChamp.championId != 0 || currentSummonersChamp.championPickIntent != 0) {
                 const cId = currentSummonersChamp.championId != 0 ? currentSummonersChamp.championId : currentSummonersChamp.championPickIntent;
                 const champKey: ChampKey = this.champKeys.find(champ => champ.key === cId);
                 if (this.currentSelectedChamp.champion !== champKey.id) {
-                  const emitData: ChampData = { champion: champKey.id, role: currentSummonersChamp.assignedPosition };
+                  const emitData: ChampData = { champion: champKey.id, role: gamemode };
                   this.currentSelectedChamp = emitData;
                   this.onChampSelected.emit(emitData);
                 }
@@ -78,6 +79,7 @@ export default class lolapi {
     if (this.leagueDetails !== null) {
       const parsedCategories = loadout.trees.map(tree => this.categories.find(category => category.name === tree).id);
       const mappedShards = this.mapShards(loadout.shards);
+      console.log(JSON.stringify([...loadout.perks, ...mappedShards]));
       const parsedPerks = [...loadout.perks, ...mappedShards].map(uggperk => this.perks.find(perk => perk.name === uggperk).id);
       const runePayload = {
         name: `Import: ${this.currentSelectedChamp.champion} ${this.currentSelectedChamp.role}`,
@@ -131,6 +133,17 @@ export default class lolapi {
     }
   }
 
+  private parsePosition = (position: string): string => {
+    switch(position) {
+      case "utility":
+        return "support";
+      case "bottom":
+        return "adc";
+      default:
+        return position;
+    }
+  }
+
   private getChampKeys = async (version: string): Promise<ChampKey[]> => {
     if (store.has(`ChampKeys${version}`))
       return store.get(`ChampKeys${version}`) as ChampKey[];
@@ -147,7 +160,7 @@ export default class lolapi {
       return store.get(`SummonerSpell${version}`) as SummonerSpell[];
     store.clear();
     const bulkData: { data: any[] } = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/summoner.json`).then(val => val.json())
-    const parsedData = Object.values(bulkData.data).reduce((prev: SummonerSpell[], curr: { name: string, key: string }) => {
+    const parsedData = Object.values(bulkData.data).filter(val => !val.id.includes("URF")).reduce((prev: SummonerSpell[], curr: { name: string, key: string }) => {
       return [...prev, { name: curr.name, key: parseInt(curr.key) }]
     }, [] as SummonerSpell[]);
     store.set(`SummonerSpell${version}`, parsedData);
@@ -208,13 +221,13 @@ export default class lolapi {
     return shards.map(shard => {
       shard = shard.replace("rune-", "");
       switch (shard) {
-        case "Health":
+        case "ScalingBonusHealth":
           shard = "HealthScaling";
           break;
-        case "Magic":
+        case "MagicResist":
           shard = "MagicRes";
           break;
-        case "CDR":
+        case "ScalingCDR":
           shard = "CDRScaling";
           break;
         case "AdaptiveForce":

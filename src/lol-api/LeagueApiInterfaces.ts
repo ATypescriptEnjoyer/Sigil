@@ -18,6 +18,7 @@ export interface LeagueDetails {
 
 export interface Session {
     myTeam: MyTeam[];
+    allowRerolling: boolean;
 }
 
 export interface MyTeam {
