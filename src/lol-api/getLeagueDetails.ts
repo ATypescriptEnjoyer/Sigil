@@ -1,4 +1,4 @@
-import generateShell from "../generate-shell";
+import { generateShell } from "../utlities";
 import { LeagueDetails } from "./LeagueApiInterfaces";
 
 const getLeaguePid = async (): Promise<number> => {

@@ -3,7 +3,7 @@ import fetch from "electron-fetch";
 import request from "./request";
 import Store from "electron-store";
 import WebSocket from "ws";
-import { tryParseJson } from "../json-try-parse";
+import { tryParseJson } from "../utlities";
 import { LeagueDetails, CurrentSummoner, ChampKey, ChampData, ChampLoadout, EventData, RuneDetails, SummonerSpell, ApiError } from "./LeagueApiInterfaces";
 import { getLeagueDetails } from "./getLeagueDetails";
 import _ from "lodash";

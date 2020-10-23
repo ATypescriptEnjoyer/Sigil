@@ -21,7 +21,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "icon": "src/images/icon"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -53,9 +55,14 @@
               "config": "./webpack.renderer.config.js",
               "entryPoints": [
                 {
-                  "html": "./src/index.html",
-                  "js": "./src/renderer.ts",
+                  "html": "./src/sidebar/index.html",
+                  "js": "./src/sidebar/renderer.ts",
                   "name": "main_window"
+                },
+                {
+                  "html": "./src/header/header.html",
+                  "js": "./src/header/header.ts",
+                  "name": "main_header"
                 }
               ]
             }
@@ -88,9 +95,11 @@
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.2",
     "tslint": "^6.1.2",
-    "typescript": "^4.0.2"
+    "typescript": "^4.0.2",
+    "file-loader": "^6.1.1"
   },
   "dependencies": {
+    "custom-electron-titlebar": "^3.2.5",
     "electron-fetch": "^1.7.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.1",
