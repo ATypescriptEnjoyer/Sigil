@@ -1,10 +1,14 @@
 import { app, BrowserView, BrowserWindow, dialog, ipcMain } from "electron";
-import path from "path";
 import { Subscription } from "sub-events";
 import lolapi from "./lol-api";
 import { ChampLoadout } from "./lol-api/LeagueApiInterfaces";
 import { productName } from "../package.json";
 import icon from "./images/icon.ico";
+
+// This is imported as a raw string.
+import styles from "./injects/uggstyles.inject.css";
+// @ts-expect-error: Imported as a string, not actual JS.
+import loadoutjs from "./injects/loadout.inject";
 
 const leagueApi = new lolapi();
 let MainBrowserWindow: BrowserWindow = null;
@@ -41,7 +45,7 @@ else {
       const url = champData.role === "aram" ?
         `https://u.gg/lol/champions/aram/${champData.champion}-aram` :
         `https://u.gg/lol/champions/${champData.champion}/build?role=${champData.role}`;
-        loadUggUrl(url)
+      loadUggUrl(url)
         .then(_ => importView.webContents.send("button-state", "enabled"))
         .catch(_ => importView.webContents.send("button-state", "enabled"));
     });
@@ -65,13 +69,7 @@ const createWindow = () => {
   MainBrowserWindow.webContents.loadURL(MAIN_HEADER_WEBPACK_ENTRY);
   addUggToBrowserWindow();
   addImportToBrowserWindow();
-  loadUggUrl("https://u.gg/lol/tier-list").then(_ => {
-    setTimeout(() =>
-      uggView.webContents.executeJavaScript(`
-        document.getElementsByClassName("title-header")[0].scrollIntoView({alignToTop: true, behavior: "smooth"});
-      `)
-      , 2000);
-  });
+  loadUggUrl("https://u.gg/lol/tier-list");
 }
 
 const addUggToBrowserWindow = (): void => {
@@ -95,23 +93,14 @@ const addImportToBrowserWindow = (): void => {
 }
 
 const loadUggUrl = (url: string): Promise<void> => {
-  return uggView.webContents.loadURL(url).then(response => {
-     uggView.webContents.insertCSS("::-webkit-scrollbar { width: 0px; height: 0px; }");
-     return response;
+  return uggView.webContents.loadURL(url).then(async response => {
+    await uggView.webContents.insertCSS(styles);
+    return response;
   });
 }
 
 const getChampLoadoutData = async (): Promise<ChampLoadout> => {
-  const js = `
-  let myBody = document.getElementsByClassName("rune-trees-container-2")[0];
-  JSON.stringify({
-    trees: Array.from(myBody.getElementsByClassName("rune-tree_header")).map(x => x.getElementsByClassName("perk-style-title")[0].innerText),
-    perks: Array.from(myBody.getElementsByClassName("perk-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The Rune","").replace("The Keystone","").trim()),
-    shards: Array.from(myBody.getElementsByClassName("shard-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The","").replace("Shard","").replace(/\\s/g,"")),
-    spells: Array.from(document.getElementsByClassName("summoner-spells")[0].getElementsByTagName("img")).map(x => x.getAttribute("alt").replace("Summoner Spell ",""))
-  });
-  `;
-  return uggView.webContents.executeJavaScript(js)
+  return uggView.webContents.executeJavaScript(loadoutjs)
     .then(val => JSON.parse(val))
     .catch(_ => null);
 }

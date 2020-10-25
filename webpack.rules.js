@@ -25,6 +25,19 @@ module.exports = [
     }
   },
   {
+    test: /\.inject\.(css)$/,
+    exclude: [`${__dirname}/src/header/`,`${__dirname}/src/sidebar`],
+    use: [
+      'raw-loader',
+    ],
+  },
+  {
+    test: /\.inject\.(js)$/,
+    use: [
+      'raw-loader',
+    ],
+  },
+  {
     test: /\.(png|svg|jpg|gif|ico)$/,
     use: [
       'file-loader',

@@ -3,6 +3,7 @@ const plugins = require('./webpack.plugins');
 
 rules.push({
   test: /\.css$/,
+  exclude: [`${__dirname}/src/injects/`],
   use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
 });
 

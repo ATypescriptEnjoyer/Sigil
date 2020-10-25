@@ -1,0 +1,12 @@
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+.ad-box-wrapper {
+    display: none !important;
+}
+
+#desktop-anchor {
+    display: none !important;
+}
