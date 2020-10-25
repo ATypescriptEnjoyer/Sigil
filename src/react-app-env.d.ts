@@ -3,12 +3,7 @@ declare module "*.ico" {
     export default value;
 }
 
-declare module "*.css" {
-    const value: any;
-    export default value;
-}
-
-declare module "*.inject.js" {
-    const value: any;
+declare module "*.inject.css" {
+    const value: string;
     export default value;
 }
