@@ -65,6 +65,7 @@ const createWindow = () => {
     frame: false,
     icon,
   });
+  MainBrowserWindow.setBackgroundColor("#0b0b23");
   MainBrowserWindow.setResizable(false);
   MainBrowserWindow.webContents.loadURL(MAIN_HEADER_WEBPACK_ENTRY);
   addUggToBrowserWindow();
@@ -77,6 +78,7 @@ const addUggToBrowserWindow = (): void => {
     return;
   const bounds = MainBrowserWindow.getBounds();
   uggView = new BrowserView();
+  uggView.setBackgroundColor("#0b0b23");
   MainBrowserWindow.addBrowserView(uggView);
   uggView.setBounds({ x: 0, y: 30, height: bounds.height - 30, width: Math.floor(bounds.width / 1.2) });
 }
@@ -85,6 +87,7 @@ const addImportToBrowserWindow = (): void => {
   if (importView !== null)
     return;
   importView = new BrowserView({ webPreferences: { nodeIntegration: true } });
+  importView.setBackgroundColor("#0b0b23");
   MainBrowserWindow.addBrowserView(importView);
   const bounds = MainBrowserWindow.getBounds();
   const uggBounds = uggView.getBounds();
@@ -114,17 +117,18 @@ app.on("window-all-closed", () => {
   app.quit();
 });
 
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+// LCU API uses a self signed cert, we need to tell electron to allow it.
+app.on('certificate-error', (event, _webContents, _url, _error, _certificate, callback) => {
   event.preventDefault();
   callback(true);
 });
 
-ipcMain.on("import-click", async (event, arg) => {
+ipcMain.on("import-click", async (_event, _arg) => {
   importView.webContents.send("button-state", "disabled");
   try {
     let json = await getChampLoadoutData();
     await leagueApi.importChampLoadout(json);
   }
-  catch (e) { }
+  catch (e) { /** Usually random errors that don't actually matter. Just ignore them.. */ }
   importView.webContents.send("button-state", "enabled");
 })
