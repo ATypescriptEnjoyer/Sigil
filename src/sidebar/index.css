@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
     margin: 0;
     padding: 0;
     width: 100%;
@@ -60,8 +61,10 @@ html, body {
     top: 50%;
     border-radius: 50%;
     padding: 50%;
-    width: 32px; /* Safari */
-    height: 32px; /* Safari */
+    width: 32px;
+    /* Safari */
+    height: 32px;
+    /* Safari */
     background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
     opacity: 0;
     transform: translate(-50%, -50%) scale(1);
@@ -111,4 +114,37 @@ html, body {
 
 .btn:disabled::after {
     opacity: 0;
+}
+
+#flash-flexbox {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+#flashpos-label {
+    color: white;
+    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+
+.radio-flex {
+    display: flex;
+    align-items: center;
+}
+
+input[type=radio] {
+    border: 0px;
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.radio-label {
+    color: white;
+    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    font-size: 20px;
+    margin-right: 10px;
 }

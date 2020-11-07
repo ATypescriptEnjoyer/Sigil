@@ -8,6 +8,7 @@ import { LeagueDetails, CurrentSummoner, ChampKey, ChampData, ChampLoadout, Even
 import { getLeagueDetails } from "./getLeagueDetails";
 import _ from "lodash";
 import { leagueVersion } from "../../package.json";
+import { app } from 'electron';
 
 const store = new Store();
 
@@ -35,8 +36,6 @@ export default class lolapi {
     this.summonerSpells = await this.getSummonerSpells(leagueVersion);
     if (newDetails !== null && !_.isEqual(newDetails, this.leagueDetails)) {
       this.leagueDetails = newDetails;
-      console.log(`URL: https://127.0.0.1:${this.leagueDetails["app-port"]}/`);
-      console.log(`B64Key: ${this.getAuthKey(true)}`);
       //All league API code goes after here!
       this.categories = await this.getRuneCategories();
       this.perks = await this.getRunePerks();
@@ -65,7 +64,7 @@ export default class lolapi {
           }
         });
         this.socket.on("close", (code, reason) => {
-          console.log(`Closed: ${code}: ${reason}`);
+          app.exit(0);
         })
       });
     }
@@ -79,7 +78,6 @@ export default class lolapi {
     if (this.leagueDetails !== null) {
       const parsedCategories = loadout.trees.map(tree => this.categories.find(category => category.name === tree).id);
       const mappedShards = this.mapShards(loadout.shards);
-      console.log(JSON.stringify([...loadout.perks, ...mappedShards]));
       const parsedPerks = [...loadout.perks, ...mappedShards].map(uggperk => this.perks.find(perk => perk.name === uggperk).id);
       const runePayload = {
         name: `Import: ${this.currentSelectedChamp.champion} ${this.currentSelectedChamp.role}`,
@@ -87,6 +85,11 @@ export default class lolapi {
         selectedPerkIds: parsedPerks,
         subStyleId: parsedCategories[1]
       };
+      const flashPosition = store.get("flash-pos","D");
+      if((flashPosition === "D" && loadout.spells[0] !== "Flash") || (flashPosition === "F" && loadout.spells[1] !== "Flash")) {
+        loadout.spells = loadout.spells.reverse();
+      }
+      
       const spellIds = loadout.spells.map(spellName => this.summonerSpells.find(summSpell => summSpell.name === spellName).key);
       const spellPayload = {
         "spell1Id": spellIds[0],

@@ -5,6 +5,8 @@ import { ChampLoadout } from "./lol-api/LeagueApiInterfaces";
 import { productName } from "../package.json";
 import icon from "./images/icon.ico";
 
+import Store from "electron-store";
+
 // This is imported as a raw string.
 import styles from "./injects/uggstyles.inject.css";
 // @ts-expect-error: Imported as a string, not actual JS.
@@ -15,6 +17,8 @@ let MainBrowserWindow: BrowserWindow = null;
 let uggView: BrowserView = null;
 let importView: BrowserView = null;
 let champSelectSubscription: Subscription = null;
+
+const store = new Store();
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_HEADER_WEBPACK_ENTRY: any;
@@ -53,7 +57,6 @@ else {
 }
 
 const createWindow = () => {
-  console.log("Main Entry: " + __dirname);
   MainBrowserWindow = new BrowserWindow({
     height: 720,
     width: 1500,
@@ -69,8 +72,17 @@ const createWindow = () => {
   MainBrowserWindow.setResizable(false);
   MainBrowserWindow.webContents.loadURL(MAIN_HEADER_WEBPACK_ENTRY);
   addUggToBrowserWindow();
-  addImportToBrowserWindow();
+  addImportToBrowserWindow().then(() => loadFlashPosition());
   loadUggUrl("https://u.gg/lol/tier-list");
+}
+
+const loadFlashPosition = (): void => {
+  ipcMain.on("flash-position-set", (_event, args) => {
+    store.set("flash-pos", args);
+  });
+  if(store.has("flash-pos")) {
+    importView.webContents.send("flash-position-get", store.get("flash-pos"));
+  }
 }
 
 const addUggToBrowserWindow = (): void => {
@@ -83,7 +95,7 @@ const addUggToBrowserWindow = (): void => {
   uggView.setBounds({ x: 0, y: 30, height: bounds.height - 30, width: Math.floor(bounds.width / 1.2) });
 }
 
-const addImportToBrowserWindow = (): void => {
+const addImportToBrowserWindow = (): Promise<void> => {
   if (importView !== null)
     return;
   importView = new BrowserView({ webPreferences: { nodeIntegration: true } });
@@ -92,7 +104,8 @@ const addImportToBrowserWindow = (): void => {
   const bounds = MainBrowserWindow.getBounds();
   const uggBounds = uggView.getBounds();
   importView.setBounds({ x: uggBounds.width, y: 30, height: bounds.height - 30, width: bounds.width - uggBounds.width });
-  importView.webContents.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  importView.webContents.openDevTools({mode: "detach"});
+  return importView.webContents.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 }
 
 const loadUggUrl = (url: string): Promise<void> => {

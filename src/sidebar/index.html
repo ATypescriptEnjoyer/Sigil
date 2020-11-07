@@ -1,13 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sigil</title>
 </head>
+
 <body>
+
+    <div id="flash-flexbox">
+        <label id="flashpos-label" for="flashpos">Flash Position: </label>
+        <div class="radio-flex">
+            <input type="radio" name="flashpos" id="flashposf" value="F"><label for="flashposf" class="radio-label">F</label>
+            <input type="radio" name="flashpos" id="flashposd" value="D"><label for="flashposd" class="radio-label">D</label>
+        </div>
+    </div>
+
     <button id="importBtn" class="btn">Import All</button>
 
     <script>require('./renderer.js')</script>
 </body>
+
 </html>
