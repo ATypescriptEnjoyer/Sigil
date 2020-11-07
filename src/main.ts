@@ -104,7 +104,6 @@ const addImportToBrowserWindow = (): Promise<void> => {
   const bounds = MainBrowserWindow.getBounds();
   const uggBounds = uggView.getBounds();
   importView.setBounds({ x: uggBounds.width, y: 30, height: bounds.height - 30, width: bounds.width - uggBounds.width });
-  importView.webContents.openDevTools({mode: "detach"});
   return importView.webContents.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 }
 
