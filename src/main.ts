@@ -77,12 +77,13 @@ const createWindow = () => {
 }
 
 const loadFlashPosition = (): void => {
+  if (!store.has("flash-pos")) {
+    store.set("flash-pos", "D");
+  }
   ipcMain.on("flash-position-set", (_event, args) => {
     store.set("flash-pos", args);
   });
-  if(store.has("flash-pos")) {
-    importView.webContents.send("flash-position-get", store.get("flash-pos"));
-  }
+  importView.webContents.send("flash-position-get", store.get("flash-pos"));
 }
 
 const addUggToBrowserWindow = (): void => {
@@ -115,9 +116,13 @@ const loadUggUrl = (url: string): Promise<void> => {
 }
 
 const getChampLoadoutData = async (): Promise<ChampLoadout> => {
-  return uggView.webContents.executeJavaScript(loadoutjs)
-    .then(val => JSON.parse(val))
-    .catch(_ => null);
+  try {
+    const resp = await uggView.webContents.executeJavaScript(loadoutjs)
+    return JSON.parse(resp);
+  }
+  catch(e) {
+    return null;
+  }
 }
 
 app.on("before-quit", () => {

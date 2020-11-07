@@ -85,11 +85,11 @@ export default class lolapi {
         selectedPerkIds: parsedPerks,
         subStyleId: parsedCategories[1]
       };
-      const flashPosition = store.get("flash-pos","D");
-      if((flashPosition === "D" && loadout.spells[0] !== "Flash") || (flashPosition === "F" && loadout.spells[1] !== "Flash")) {
+      const flashPosition = store.get("flash-pos", "D");
+      if ((flashPosition === "D" && loadout.spells[0] !== "Flash") || (flashPosition === "F" && loadout.spells[1] !== "Flash")) {
         loadout.spells = loadout.spells.reverse();
       }
-      
+
       const spellIds = loadout.spells.map(spellName => this.summonerSpells.find(summSpell => summSpell.name === spellName).key);
       const spellPayload = {
         "spell1Id": spellIds[0],
@@ -137,7 +137,7 @@ export default class lolapi {
   }
 
   private parsePosition = (position: string): string => {
-    switch(position) {
+    switch (position) {
       case "utility":
         return "support";
       case "bottom":
@@ -223,6 +223,7 @@ export default class lolapi {
   private mapShards = (shards: string[]): string[] => {
     return shards.map(shard => {
       shard = shard.replace("rune-", "");
+      shard = shard.replace(" ", "");
       switch (shard) {
         case "ScalingBonusHealth":
           shard = "HealthScaling";
