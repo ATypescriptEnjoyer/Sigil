@@ -1,7 +1,7 @@
 {
   "name": "sigil",
   "productName": "Sigil",
-  "leagueVersion": "10.22.1",
+  "leagueVersion": "11.1.1",
   "version": "1.0.4",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -15,7 +15,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "Sasha",
+    "name": "Sasha Ryder",
     "email": "8694395+SashaRyder@users.noreply.github.com"
   },
   "license": "MIT",
@@ -89,19 +89,21 @@
     "css-loader": "^4.2.1",
     "electron": "10.1.3",
     "eslint": "^7.6.0",
+    "eslint-plugin-html": "^6.1.1",
     "eslint-plugin-import": "^2.20.0",
     "file-loader": "^6.1.1",
     "fork-ts-checker-webpack-plugin": "^5.0.14",
     "node-loader": "^1.0.1",
+    "raw-loader": "^4.0.2",
     "style-loader": "^1.2.1",
     "ts-loader": "^8.0.2",
     "tslint": "^6.1.2",
-    "typescript": "^4.0.2",
-    "raw-loader": "^4.0.2"
+    "typescript": "^4.0.2"
   },
   "dependencies": {
     "custom-electron-titlebar": "^3.2.5",
     "electron-fetch": "^1.7.1",
+    "electron-log": "^4.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^6.0.1",
     "lodash": "^4.17.20",
