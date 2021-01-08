@@ -2,8 +2,8 @@
   "name": "sigil",
   "productName": "Sigil",
   "leagueVersion": "11.1.1",
-  "version": "1.0.4",
-  "description": "My Electron application description",
+  "version": "1.0.5",
+  "description": "League of Legends Rune Importer",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
