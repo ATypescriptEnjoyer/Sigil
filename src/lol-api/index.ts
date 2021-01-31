@@ -105,14 +105,28 @@ export default class lolapi {
   };
 
   public importChampLoadout = async (loadout: ChampLoadout): Promise<void> => {
+    console.log(`Started importing ${loadout.champName}`);
     if (this.leagueDetails !== null) {
-      const parsedCategories = loadout.trees.map(
-        (tree) => this.categories.find((category) => category.name === tree).id
-      );
+      console.log(`Started importing rune trees`);
+      const parsedCategories = loadout.trees.map((tree) => {
+        const treeId = this.categories.find(
+          (category) => category.name === tree
+        )?.id;
+        if (!treeId) {
+          console.log(`cannot find tree ID for ${tree}`);
+        }
+        return treeId;
+      });
+      console.log(`Started importing shards`);
       const mappedShards = this.mapShards(loadout.shards);
-      const parsedPerks = [...loadout.perks, ...mappedShards].map(
-        (uggperk) => this.perks.find((perk) => perk.name === uggperk).id
-      );
+      console.log(`Started importing perks`);
+      const parsedPerks = [...loadout.perks, ...mappedShards].map((uggperk) => {
+        const perkId = this.perks.find((perk) => perk.name === uggperk)?.id;
+        if (!perkId) {
+          console.log(`Cannot find perk ID for ${uggperk}`);
+        }
+        return perkId;
+      });
       const runePayload = {
         name: `Import: ${loadout.champName} ${loadout.role}`,
         primaryStyleId: parsedCategories[0],

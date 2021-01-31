@@ -4,6 +4,6 @@ JSON.stringify({
   role: document.querySelector(".champion-label .champion-title").innerHTML.split(" ")[2].replace(",",""),
   trees: Array.from(myBody.getElementsByClassName("rune-tree_header")).map(x => x.getElementsByClassName("perk-style-title")[0].innerText),
   perks: Array.from(myBody.getElementsByClassName("perk-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The Rune", "").replace("The Keystone", "").trim()),
-  shards: Array.from(myBody.getElementsByClassName("shard-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The", "").replace("Shard", "").trim()),
+  shards: Array.from(myBody.getElementsByClassName("shard-active")).map(x => x.firstElementChild.getAttribute("alt").replace("The", "").replace("Shard", "").trim().replace(/\s/g, '')),
   spells: Array.from(document.getElementsByClassName("summoner-spells")[0].getElementsByTagName("img")).map(x => x.getAttribute("alt").replace("Summoner Spell ", ""))
 });

@@ -2,7 +2,7 @@ import { app, BrowserView, BrowserWindow, dialog, ipcMain } from "electron";
 import { Subscription } from "sub-events";
 import lolapi from "./lol-api";
 import { ChampLoadout } from "./lol-api/LeagueApiInterfaces";
-import { productName } from "../package.json";
+import { productName, version } from "../package.json";
 import icon from "./images/icon.ico";
 import log from "electron-log";
 
@@ -78,7 +78,10 @@ const createWindow = () => {
   MainBrowserWindow.setResizable(false);
   MainBrowserWindow.webContents.loadURL(MAIN_HEADER_WEBPACK_ENTRY);
   addUggToBrowserWindow();
-  addImportToBrowserWindow().then(() => loadFlashPosition());
+  addImportToBrowserWindow().then(() => {
+    loadFlashPosition();
+    importView.webContents.send("set-version", version);
+  });
   loadUggUrl("https://u.gg/lol/tier-list");
 };
 

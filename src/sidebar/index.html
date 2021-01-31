@@ -8,16 +8,20 @@
 </head>
 
 <body>
-
-    <div id="flash-flexbox">
-        <label id="flashpos-label" for="flashpos">Flash Position: </label>
-        <div class="radio-flex">
-            <input type="radio" name="flashpos" id="flashposd" value="D"><label for="flashposd" class="radio-label">D</label>
-            <input type="radio" name="flashpos" id="flashposf" value="F"><label for="flashposf" class="radio-label">F</label>
+    <div>
+        <div id="flash-flexbox">
+            <label id="flashpos-label" for="flashpos">Flash Position: </label>
+            <div class="radio-flex">
+                <input type="radio" name="flashpos" id="flashposd" value="D"><label for="flashposd" class="radio-label">D</label>
+                <input type="radio" name="flashpos" id="flashposf" value="F"><label for="flashposf" class="radio-label">F</label>
+            </div>
         </div>
+    
+        <button id="importBtn" class="btn">Import All</button>
     </div>
-
-    <button id="importBtn" class="btn">Import All</button>
+    <div class="versionDiv">
+        <p id="version">Version 0</p>
+    </div>
 
     <script>require('./renderer.js')</script>
 </body>

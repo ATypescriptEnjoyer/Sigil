@@ -148,3 +148,23 @@ input[type=radio] {
     font-size: 20px;
     margin-right: 10px;
 }
+
+body {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
+
+.versionDiv {
+    width: 100%;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+}
+
+#version {
+    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+}
