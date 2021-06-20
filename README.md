@@ -3,7 +3,7 @@
 Lightning fast Rune &amp; Spell importer for League of Legends using u.gg for loadout.
 
 ## Screenshot: 
-![alt text](https://i.imgur.com/1CZvJXT.png "Sigil Screenshot")
+![alt text](![image](https://user-images.githubusercontent.com/8694395/122681427-2cdb7900-d1ec-11eb-8d7e-fdc46d57a6a3.png) "Sigil Screenshot")
 
 ## Still in development! Code is horrible so expect refinements!
 
