@@ -125,11 +125,13 @@ const addImportToBrowserWindow = (): Promise<void> => {
   return importView.webContents.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 };
 
-const loadUggUrl = (url: string): Promise<void> => {
-  return uggView.webContents.loadURL(url).then(async (response) => {
-    await uggView.webContents.insertCSS(styles);
-    return response;
-  });
+const loadUggUrl = async (url: string): Promise<void> => {
+  await uggView.webContents.loadURL(url);
+  await uggView.webContents.insertCSS(styles);
+  await uggView.webContents.executeJavaScript(`
+    sessionStorage.setItem('ad-free-banner-v2','hide');
+    document.getElementsByClassName('ad-free-banner')[0].remove();
+  `);
 };
 
 const getChampLoadoutData = async (): Promise<ChampLoadout> => {

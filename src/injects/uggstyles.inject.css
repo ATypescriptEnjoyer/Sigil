@@ -7,6 +7,14 @@
     display: none !important;
 }
 
+.masthead-right {
+    visibility: hidden;
+}
+
+.video-guide {
+    display: none !important;
+}
+
 #desktop-anchor {
     display: none !important;
 }
