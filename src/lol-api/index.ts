@@ -17,7 +17,6 @@ import {
 } from "./LeagueApiInterfaces";
 import { getLeagueDetails } from "./getLeagueDetails";
 import _ from "lodash";
-import { leagueVersion } from "../../package.json";
 import { app } from "electron";
 
 const store = new Store();
@@ -41,6 +40,10 @@ export default class lolapi {
 
   public start = async (): Promise<void> => {
     const newDetails = await getLeagueDetails();
+    const leagueVersions: string[] = await fetch(
+      "https://ddragon.leagueoflegends.com/api/versions.json"
+    ).then((val: { json: () => Promise<string[]> }) => val.json());
+    const leagueVersion = leagueVersions[0];
     this.champKeys = await this.getChampKeys(leagueVersion);
     this.summonerSpells = await this.getSummonerSpells(leagueVersion);
     if (newDetails !== null && !_.isEqual(newDetails, this.leagueDetails)) {
@@ -64,32 +67,7 @@ export default class lolapi {
               (x) => typeof x === "object"
             );
             if (champData.eventType === "Update") {
-              const currentSummonersChamp = champData.data.myTeam.find(
-                (x) => x.summonerId === this.currentSummoner.summonerId
-              );
-              const gamemode = champData.data.allowRerolling
-                ? "aram"
-                : this.parsePosition(currentSummonersChamp.assignedPosition);
-              if (
-                currentSummonersChamp.championId != 0 ||
-                currentSummonersChamp.championPickIntent != 0
-              ) {
-                const cId =
-                  currentSummonersChamp.championId != 0
-                    ? currentSummonersChamp.championId
-                    : currentSummonersChamp.championPickIntent;
-                const champKey: ChampKey = this.champKeys.find(
-                  (champ) => champ.key === cId
-                );
-                if (this.currentSelectedChamp.champion !== champKey.id) {
-                  const emitData: ChampData = {
-                    champion: champKey.id,
-                    role: gamemode,
-                  };
-                  this.currentSelectedChamp = emitData;
-                  this.onChampSelected.emit(emitData);
-                }
-              }
+              this.onChampUpdate(champData);
             }
           }
         });
@@ -97,6 +75,45 @@ export default class lolapi {
           app.exit(0);
         });
       });
+    }
+  };
+
+  private onChampUpdate = (champData: {
+    data: {
+      myTeam: {
+        summonerId: number;
+        assignedPosition: string;
+        championId: number;
+        championPickIntent: number;
+      }[];
+      allowRerolling: boolean;
+    };
+  }): void => {
+    const currentSummonersChamp = champData.data.myTeam.find(
+      (x) => x.summonerId === this.currentSummoner.summonerId
+    );
+    const gamemode = champData.data.allowRerolling
+      ? "aram"
+      : this.parsePosition(currentSummonersChamp.assignedPosition);
+    if (
+      currentSummonersChamp.championId != 0 ||
+      currentSummonersChamp.championPickIntent != 0
+    ) {
+      const cId =
+        currentSummonersChamp.championId != 0
+          ? currentSummonersChamp.championId
+          : currentSummonersChamp.championPickIntent;
+      const champKey: ChampKey = this.champKeys.find(
+        (champ) => champ.key === cId
+      );
+      if (this.currentSelectedChamp.champion !== champKey.id) {
+        const emitData: ChampData = {
+          champion: champKey.id,
+          role: gamemode,
+        };
+        this.currentSelectedChamp = emitData;
+        this.onChampSelected.emit(emitData);
+      }
     }
   };
 
@@ -314,8 +331,9 @@ export default class lolapi {
     );
     if (req.error) {
       if (req.error.message === "Max pages reached") {
-        const firstEditablePage = availableRunePages.find((x) => x.isEditable)
-          .id;
+        const firstEditablePage = availableRunePages.find(
+          (x) => x.isEditable
+        ).id;
         await this.deleteRunePage(firstEditablePage);
         await request(
           "127.0.0.1",

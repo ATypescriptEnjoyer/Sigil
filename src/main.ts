@@ -126,7 +126,10 @@ const addImportToBrowserWindow = (): Promise<void> => {
 };
 
 const loadUggUrl = async (url: string): Promise<void> => {
-  await uggView.webContents.loadURL(url);
+  await uggView.webContents.loadURL(url, {
+    userAgent:
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36",
+  });
   await uggView.webContents.insertCSS(styles);
   await uggView.webContents.executeJavaScript(`
     sessionStorage.setItem('ad-free-banner-v2','hide');

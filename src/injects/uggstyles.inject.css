@@ -1,20 +1,24 @@
 ::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
+  width: 0px;
+  height: 0px;
 }
 
 .ad-box-wrapper {
-    display: none !important;
+  display: none !important;
 }
 
 .masthead-right {
-    visibility: hidden;
+  visibility: hidden;
 }
 
 .video-guide {
-    display: none !important;
+  display: none !important;
 }
 
 #desktop-anchor {
-    display: none !important;
+  display: none !important;
+}
+
+.carousel-banner-container {
+  display: none !important;
 }
